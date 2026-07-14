@@ -1,14 +1,16 @@
 :root {
-    --bg-color: #0b0f19;
-    --card-bg: #151d30;
-    --border-color: #24324f;
-    --text-primary: #f3f4f6;
+    --bg-color: #080c14;
+    --card-bg: #111827;
+    --border-color: #1f2937;
+    --text-primary: #f9fafb;
     --text-secondary: #9ca3af;
-    --accent-color: #ff3e3e;
-    --accent-hover: #ff6565;
+    --accent-color: #ef4444;
+    --accent-hover: #dc2626;
+    --accent-glow: rgba(239, 68, 68, 0.15);
     --error-color: #ef4444;
-    --code-bg: #090d16;
-    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --code-bg: #030712;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --transition-speed: 0.2s;
 }
 
 * {
@@ -25,19 +27,23 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    transition: background-color 0.4s ease;
 }
 
+/* App Layout */
 .app-container {
     flex: 1;
     width: 100%;
-    max-width: 720px;
+    max-width: 760px;
     margin: 0 auto;
     padding: 40px 20px;
+    transition: max-width 0.4s ease, padding 0.4s ease;
 }
 
 .app-header {
     text-align: center;
     margin-bottom: 32px;
+    transition: opacity 0.3s ease;
 }
 
 .logo-area {
@@ -55,7 +61,7 @@ body {
 }
 
 .app-header h1 {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 700;
     letter-spacing: -0.025em;
     color: var(--text-primary);
@@ -68,64 +74,110 @@ body {
     margin: 0 auto;
 }
 
+/* Form Controls */
 .input-section {
     margin-bottom: 32px;
+    transition: opacity 0.3s ease;
 }
 
-.embed-form {
+.input-container {
     display: flex;
-    gap: 8px;
+    position: relative;
+    align-items: center;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 4px;
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.input-container:focus-within {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 input[type="url"] {
     flex: 1;
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    padding: 12px 14px;
     font-family: inherit;
     font-size: 14px;
     color: var(--text-primary);
     outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-input[type="url"]:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(255, 62, 62, 0.15);
-}
-
-button {
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
+.paste-btn {
+    background-color: rgba(31, 41, 55, 0.5);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
-    transition: background-color 0.15s ease, transform 0.1s ease;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 8px;
+    cursor: pointer;
+    transition: color 0.15s, background-color 0.15s;
 }
 
-#embedButton {
+.paste-btn:hover {
+    color: var(--text-primary);
+    background-color: rgba(31, 41, 55, 0.8);
+}
+
+.embed-btn {
     background-color: var(--accent-color);
     color: #ffffff;
-    padding: 12px 24px;
+    padding: 10px 20px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.15s, transform 0.1s;
 }
 
-#embedButton:hover {
+.embed-btn:hover {
     background-color: var(--accent-hover);
 }
 
-#embedButton:active {
+.embed-btn:active {
     transform: scale(0.98);
+}
+
+/* Options & Toggles */
+.options-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 12px;
+    justify-content: center;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-label input[type="checkbox"] {
+    accent-color: var(--accent-color);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
 }
 
 .error-message {
     font-size: 13px;
     color: var(--error-color);
-    margin-top: 8px;
+    margin-top: 10px;
     min-height: 20px;
+    text-align: center;
 }
 
+/* Result Section */
 .result-section {
     display: flex;
     flex-direction: column;
@@ -141,16 +193,40 @@ button {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 16px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.card-header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
 }
 
 .preview-card h2, .code-card h2 {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--text-secondary);
-    margin-bottom: 12px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+}
+
+/* Focus Action Button */
+.focus-btn {
+    background-color: var(--border-color);
+    color: var(--text-primary);
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.15s;
+}
+
+.focus-btn:hover {
+    background-color: rgba(31, 41, 55, 0.8);
 }
 
 .video-container {
@@ -159,6 +235,7 @@ button {
     border-radius: 6px;
     overflow: hidden;
     background-color: #000;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
 }
 
 .video-container iframe {
@@ -168,6 +245,7 @@ button {
     display: block;
 }
 
+/* Copy Section */
 .code-header {
     display: flex;
     justify-content: space-between;
@@ -175,20 +253,20 @@ button {
     margin-bottom: 12px;
 }
 
-.code-header h2 {
-    margin-bottom: 0;
-}
-
 .copy-btn {
     background-color: var(--border-color);
     color: var(--text-primary);
-    padding: 6px 12px;
+    padding: 6px 14px;
     font-size: 12px;
+    font-weight: 500;
     border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.15s;
 }
 
 .copy-btn:hover {
-    background-color: rgba(36, 50, 79, 0.8);
+    background-color: rgba(31, 41, 55, 0.8);
 }
 
 .copy-btn.copied {
@@ -200,27 +278,51 @@ button {
     background-color: var(--code-bg);
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    padding: 12px;
+    padding: 12px 16px;
     overflow-x: auto;
 }
 
-.code-body pre {
-    margin: 0;
-}
-
 .code-body code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 13px;
     color: #38bdf8;
     white-space: pre-wrap;
     word-break: break-all;
 }
 
+/* Floating Exit Button */
+.exit-focus-btn {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    background-color: rgba(31, 41, 55, 0.8);
+    color: var(--text-primary);
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background-color 0.15s, opacity 0.15s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.exit-focus-btn:hover {
+    background-color: rgba(239, 68, 68, 0.9);
+    border-color: var(--accent-color);
+}
+
+/* Footer styling */
 .app-footer {
     padding: 24px 20px;
     text-align: center;
     border-top: 1px solid var(--border-color);
-    background-color: rgba(11, 15, 25, 0.5);
+    background-color: rgba(8, 12, 20, 0.5);
+    margin-top: auto;
+    transition: opacity 0.3s ease;
 }
 
 .footer-links {
@@ -243,9 +345,57 @@ button {
 
 .footer-credit {
     font-size: 12px;
-    color: rgba(156, 163, 175, 0.6);
+    color: rgba(156, 163, 175, 0.5);
 }
 
+/* Focus Mode Layout Overrides */
+body.focus-active {
+    background-color: #020408;
+}
+
+body.focus-active .app-header,
+body.focus-active .input-section,
+body.focus-active .code-card,
+body.focus-active .app-footer,
+body.focus-active .preview-card h2,
+body.focus-active .focus-btn {
+    opacity: 0;
+    pointer-events: none;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: none;
+}
+
+body.focus-active .app-container {
+    max-width: 100vw;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+body.focus-active .preview-card {
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    width: 100%;
+    max-width: 90vw;
+}
+
+body.focus-active .video-container {
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+}
+
+body.focus-active .exit-focus-btn {
+    display: block;
+}
+
+/* Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -257,12 +407,59 @@ button {
     }
 }
 
-@media (max-width: 520px) {
-    .embed-form {
-        flex-direction: column;
+@media (max-width: 640px) {
+    .app-container {
+        padding: 24px 16px;
     }
     
-    #embedButton {
+    .input-container {
+        flex-direction: column;
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        gap: 8px;
+    }
+    
+    .input-container:focus-within {
+        box-shadow: none;
+    }
+    
+    input[type="url"] {
         width: 100%;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 14px;
+    }
+    
+    input[type="url"]:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    
+    .paste-btn {
+        width: 100%;
+        margin-right: 0;
+        padding: 12px;
+        text-align: center;
+    }
+    
+    .embed-btn {
+        width: 100%;
+        padding: 14px;
+    }
+    
+    .options-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    body.focus-active .preview-card {
+        max-width: 100vw;
+    }
+    
+    body.focus-active .video-container {
+        border-radius: 0;
     }
 }

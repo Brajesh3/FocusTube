@@ -6,10 +6,84 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoContainer = document.getElementById('videoContainer');
     const iframeCodeDisplay = document.getElementById('iframeCodeDisplay');
     const copyButton = document.getElementById('copyButton');
+    const pasteButton = document.getElementById('pasteButton');
+    const focusModeBtn = document.getElementById('focusModeBtn');
+    const exitFocusBtn = document.getElementById('exitFocusBtn');
+    
+    const autoplayToggle = document.getElementById('autoplayToggle');
+    const loopToggle = document.getElementById('loopToggle');
 
     // Handle form submit
     embedForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        triggerEmbed();
+    });
+
+    // Handle paste button action
+    pasteButton.addEventListener('click', async () => {
+        try {
+            const clipboardText = await navigator.clipboard.readText();
+            if (clipboardText) {
+                youtubeLinkInput.value = clipboardText.trim();
+                triggerEmbed();
+            }
+        } catch (err) {
+            showError('Unable to read clipboard. Please paste the link manually.');
+        }
+    });
+
+    // Focus Mode toggles
+    focusModeBtn.addEventListener('click', () => {
+        document.body.classList.add('focus-active');
+    });
+
+    exitFocusBtn.addEventListener('click', () => {
+        document.body.classList.remove('focus-active');
+    });
+
+    // Keyboard listener to escape focus mode
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.body.classList.contains('focus-active')) {
+            document.body.classList.remove('focus-active');
+        }
+    });
+
+    // Copy iframe code to clipboard
+    copyButton.addEventListener('click', async () => {
+        const code = iframeCodeDisplay.textContent;
+        if (!code) return;
+
+        try {
+            await navigator.clipboard.writeText(code);
+            setCopySuccessState();
+        } catch (err) {
+            // Fallback for older browsers
+            const textarea = document.createElement('textarea');
+            textarea.value = code;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                setCopySuccessState();
+            } catch (fallbackErr) {
+                console.error('Copy fallback failed', fallbackErr);
+            }
+            document.body.removeChild(textarea);
+        }
+    });
+
+    // Auto-parse on page load if query parameter exists
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryUrl = urlParams.get('url') || urlParams.get('v');
+    if (queryUrl) {
+        youtubeLinkInput.value = decodeURIComponent(queryUrl);
+        triggerEmbed();
+    }
+
+    // Main embed logic controller
+    function triggerEmbed() {
         const url = youtubeLinkInput.value.trim();
         
         if (!url) {
@@ -23,43 +97,17 @@ document.addEventListener('DOMContentLoaded', () => {
             clearError();
             renderEmbed(embedInfo);
         } else {
-            showError('Invalid YouTube link. Please check the URL and try again.');
+            showError('Invalid YouTube URL. Please verify and try again.');
             hideResult();
         }
-    });
+    }
 
-    // Copy to clipboard
-    copyButton.addEventListener('click', async () => {
-        const code = iframeCodeDisplay.textContent;
-        if (!code) return;
-
-        try {
-            await navigator.clipboard.writeText(code);
-            setCopySuccessState();
-        } catch (err) {
-            // Fallback for older browsers or permission issues
-            const textarea = document.createElement('textarea');
-            textarea.value = code;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                setCopySuccessState();
-            } catch (fallbackErr) {
-                console.error('Fallback copy failed', fallbackErr);
-            }
-            document.body.removeChild(textarea);
-        }
-    });
-
-    // Helper: Parse YouTube URL for video ID, Shorts ID, or Playlist ID
+    // Parse YouTube URL (Video, Shorts, Playlists)
     function parseYouTubeUrl(url) {
         const hasPlaylist = url.includes('list=');
         const hasVideo = url.match(/(?:v=|shorts\/|youtu\.be\/)/);
 
-        // Explicit playlist page/URL
+        // 1. Explicit playlist page or URL containing playlist ID without active video
         if (url.includes('/playlist') || (hasPlaylist && !hasVideo)) {
             const playlistMatch = url.match(/[?&]list=([^#\&\?]+)/);
             if (playlistMatch) {
@@ -67,8 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Standard video, short, or embed URL
-        // Matches 11 character alphanumeric strings with dashes/underscores
+        // 2. Standard video, shorts, or short link
+        // Matches the 11 character alphanumeric video ID
         const videoRegex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?|shorts)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
         const videoMatch = url.match(videoRegex);
 
@@ -76,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return { type: 'video', id: videoMatch[1] };
         }
 
-        // Fallback for mixed URLs with list parameter
+        // 3. Fallback for playlist URL with video details
         if (hasPlaylist) {
             const playlistMatch = url.match(/[?&]list=([^#\&\?]+)/);
             if (playlistMatch) {
@@ -87,42 +135,62 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
-    // Helper: Render iframe and display source code
+    // Generate and render iframe code based on URL type and custom selections
     function renderEmbed({ type, id }) {
-        let embedUrl = '';
-        if (type === 'video') {
-            embedUrl = `https://www.youtube.com/embed/${id}`;
-        } else if (type === 'playlist') {
-            embedUrl = `https://www.youtube.com/embed/videoseries?list=${id}`;
-        }
-
-        const iframeHtml = `<iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+        const autoplay = autoplayToggle.checked;
+        const loop = loopToggle.checked;
         
-        videoContainer.innerHTML = iframeHtml;
-        iframeCodeDisplay.textContent = iframeHtml;
+        // Base embed parameters for distraction-free watching:
+        // rel=0: only show related videos from the same channel
+        // iv_load_policy=3: hide annotations
+        // modestbranding=1: hide logo
+        let queryParams = `rel=0&iv_load_policy=3&modestbranding=1`;
+        
+        if (autoplay) {
+            queryParams += `&autoplay=1`;
+        }
+        
+        if (type === 'video') {
+            if (loop) {
+                // Loop parameters for single videos require a playlist parameter referencing the video ID
+                queryParams += `&loop=1&playlist=${id}`;
+            }
+            const embedUrl = `https://www.youtube.com/embed/${id}?${queryParams}`;
+            generateIframe(embedUrl);
+        } else if (type === 'playlist') {
+            if (loop) {
+                queryParams += `&loop=1`;
+            }
+            const embedUrl = `https://www.youtube.com/embed/videoseries?list=${id}&${queryParams}`;
+            generateIframe(embedUrl);
+        }
+    }
+
+    // Inject iframe element and display raw markup
+    function generateIframe(url) {
+        const iframeMarkup = `<iframe src="${url}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+        
+        videoContainer.innerHTML = iframeMarkup;
+        iframeCodeDisplay.textContent = iframeMarkup;
         
         resultSection.classList.remove('hidden');
         resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // Helper: Show error messages
     function showError(message) {
         errorMessage.textContent = message;
     }
 
-    // Helper: Clear error messages
     function clearError() {
         errorMessage.textContent = '';
     }
 
-    // Helper: Hide the output area
     function hideResult() {
         resultSection.classList.add('hidden');
         videoContainer.innerHTML = '';
         iframeCodeDisplay.textContent = '';
     }
 
-    // Helper: Transition button to copied success state
     function setCopySuccessState() {
         copyButton.textContent = 'Copied!';
         copyButton.classList.add('copied');

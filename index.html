@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Video Embedder</title>
-    <meta name="description" content="Embed YouTube videos easily with this simple tool.">
-    <meta name="keywords" content="YouTube, embed, video, iframe">
+    <title>FocusTube — Distraction-Free YouTube Player</title>
+    <meta name="description" content="Watch YouTube videos and playlists without distractions, ads, recommendations, or comments. Ideal for deep work and studying.">
+    <meta name="keywords" content="YouTube, embed, video, playlist, distraction-free, study, focus, play">
     <meta name="author" content="Brajesh Kumar">
     <meta name="google-site-verification" content="As8BHkztjB-42ljJNVZmltqMOTdSKd9qv60EsyAN9H4">
     
@@ -15,7 +15,6 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-V6PY62418Z');
     </script>
     
@@ -26,39 +25,58 @@
     <link rel="icon" type="image/png" href="youtube.png" sizes="64x64">
 </head>
 <body>
+    <button id="exitFocusBtn" class="exit-focus-btn">Exit Focus Mode</button>
+
     <main class="app-container">
         <header class="app-header">
             <div class="logo-area">
-                <img src="youtube.png" alt="YouTube Icon" class="app-logo">
-                <h1>YouTube Video Embedder</h1>
+                <img src="youtube.png" alt="FocusTube Icon" class="app-logo">
+                <h1>FocusTube</h1>
             </div>
-            <p class="subtitle">Quickly generate clean, responsive iframe embed codes for videos and playlists.</p>
+            <p class="subtitle">A distraction-free viewer for YouTube videos and playlists. Keep your focus on studying, not recommendations.</p>
         </header>
 
         <section class="input-section">
-            <form id="embedForm" class="embed-form">
-                <input 
-                    type="url" 
-                    id="youtubeLink" 
-                    placeholder="Paste YouTube video, playlist, or shorts link..." 
-                    required 
-                    autocomplete="off"
-                >
-                <button type="submit" id="embedButton">Embed</button>
+            <form id="embedForm">
+                <div class="input-container">
+                    <input 
+                        type="url" 
+                        id="youtubeLink" 
+                        placeholder="Paste YouTube link here..." 
+                        required 
+                        autocomplete="off"
+                    >
+                    <button type="button" id="pasteButton" class="paste-btn">Paste</button>
+                    <button type="submit" id="embedButton" class="embed-btn">Play</button>
+                </div>
+                
+                <div class="options-container">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="autoplayToggle" checked>
+                        <span>Autoplay</span>
+                    </label>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="loopToggle">
+                        <span>Loop Video</span>
+                    </label>
+                </div>
             </form>
             <div id="errorMessage" class="error-message"></div>
         </section>
 
         <section id="resultSection" class="result-section hidden">
             <div class="preview-card">
-                <h2>Live Preview</h2>
+                <div class="card-header-actions">
+                    <h2>Live Preview</h2>
+                    <button type="button" id="focusModeBtn" class="focus-btn">Focus Mode</button>
+                </div>
                 <div id="videoContainer" class="video-container"></div>
             </div>
 
             <div class="code-card">
                 <div class="code-header">
-                    <h2>Iframe Code</h2>
-                    <button id="copyButton" class="copy-btn">Copy Code</button>
+                    <h2>Distraction-Free Embed Code</h2>
+                    <button type="button" id="copyButton" class="copy-btn">Copy Code</button>
                 </div>
                 <div class="code-body">
                     <pre><code id="iframeCodeDisplay"></code></pre>
