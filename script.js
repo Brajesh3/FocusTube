@@ -48,6 +48,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Lock screen orientation to landscape when entering fullscreen mode
+    const handleFullscreenChange = () => {
+        const isFullscreen = document.fullscreenElement || 
+                             document.webkitFullscreenElement || 
+                             document.mozFullScreenElement || 
+                             document.msFullscreenElement;
+        if (isFullscreen) {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(() => {});
+            }
+        } else {
+            if (screen.orientation && screen.orientation.unlock) {
+                screen.orientation.unlock();
+            }
+        }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
     // Copy iframe code to clipboard
     copyButton.addEventListener('click', async () => {
         const code = iframeCodeDisplay.textContent;
@@ -174,12 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         iframeCodeDisplay.textContent = iframeMarkup;
         
         resultSection.classList.remove('hidden');
-        
-        if (window.innerWidth <= 640) {
-            document.body.classList.add('focus-active');
-        } else {
-            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
+        resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function showError(message) {
