@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // rel=0: only show related videos from the same channel
         // iv_load_policy=3: hide annotations
         // modestbranding=1: hide logo
-        let queryParams = `rel=0&iv_load_policy=3&modestbranding=1`;
+        let queryParams = `rel=0&iv_load_policy=3&modestbranding=1&playsinline=1`;
         
         if (autoplay) {
             queryParams += `&autoplay=1`;
@@ -174,7 +174,12 @@ document.addEventListener('DOMContentLoaded', () => {
         iframeCodeDisplay.textContent = iframeMarkup;
         
         resultSection.classList.remove('hidden');
-        resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        if (window.innerWidth <= 640) {
+            document.body.classList.add('focus-active');
+        } else {
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }
 
     function showError(message) {
