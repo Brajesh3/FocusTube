@@ -1,78 +1,268 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #000;
-    color: #fff;
+:root {
+    --bg-color: #0b0f19;
+    --card-bg: #151d30;
+    --border-color: #24324f;
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --accent-color: #ff3e3e;
+    --accent-hover: #ff6565;
+    --error-color: #ef4444;
+    --code-bg: #090d16;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-.container {
-    max-width: 100%;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #000;
-    border-radius: 0;
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-h1 {
-    text-align: center;
-    color: #ff6f61;
-}
-
-input[type="text"] {
+.app-container {
+    flex: 1;
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 5px;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.app-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.app-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+}
+
+.subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.input-section {
+    margin-bottom: 32px;
+}
+
+.embed-form {
+    display: flex;
+    gap: 8px;
+}
+
+input[type="url"] {
+    flex: 1;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-primary);
     outline: none;
-    background-color: #000;
-    color: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type="url"]:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(255, 62, 62, 0.15);
 }
 
 button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 5px;
-    background-color: #ff6f61;
-    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
-button:hover {
-    background-color: #ff8a75;
+#embedButton {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    padding: 12px 24px;
 }
 
-#videoContainer, #iframeContainer {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #fff;
-    border-radius: 5px;
-    background-color: #000;
-    overflow: hidden;
+#embedButton:hover {
+    background-color: var(--accent-hover);
 }
 
-#videoContainer iframe {
-    width: 100%;
-    height: 60vh; /* Adjust the height as needed */
+#embedButton:active {
+    transform: scale(0.98);
 }
 
-#copyButton {
+.error-message {
+    font-size: 13px;
+    color: var(--error-color);
+    margin-top: 8px;
+    min-height: 20px;
+}
+
+.result-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.result-section.hidden {
     display: none;
 }
 
-footer {
+.preview-card, .code-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.preview-card h2, .code-card h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.video-container {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #000;
+}
+
+.video-container iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.code-header h2 {
+    margin-bottom: 0;
+}
+
+.copy-btn {
+    background-color: var(--border-color);
+    color: var(--text-primary);
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+.copy-btn:hover {
+    background-color: rgba(36, 50, 79, 0.8);
+}
+
+.copy-btn.copied {
+    background-color: #10b981;
+    color: #ffffff;
+}
+
+.code-body {
+    background-color: var(--code-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 12px;
+    overflow-x: auto;
+}
+
+.code-body pre {
+    margin: 0;
+}
+
+.code-body code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 13px;
+    color: #38bdf8;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.app-footer {
+    padding: 24px 20px;
     text-align: center;
-    margin-top: 20px;
+    border-top: 1px solid var(--border-color);
+    background-color: rgba(11, 15, 25, 0.5);
 }
 
-footer button {
-    background-color: #ff6f61;
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 8px;
 }
 
-footer button:hover {
-    background-color: #ff8a75;
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.15s ease;
+}
+
+.footer-links a:hover {
+    color: var(--text-primary);
+}
+
+.footer-credit {
+    font-size: 12px;
+    color: rgba(156, 163, 175, 0.6);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 520px) {
+    .embed-form {
+        flex-direction: column;
+    }
+    
+    #embedButton {
+        width: 100%;
+    }
 }

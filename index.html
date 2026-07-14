@@ -8,6 +8,7 @@
     <meta name="keywords" content="YouTube, embed, video, iframe">
     <meta name="author" content="Brajesh Kumar">
     <meta name="google-site-verification" content="As8BHkztjB-42ljJNVZmltqMOTdSKd9qv60EsyAN9H4">
+    
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-V6PY62418Z"></script>
     <script>
@@ -17,25 +18,63 @@
 
         gtag('config', 'G-V6PY62418Z');
     </script>
+    
     <!-- GoatCounter -->
     <script data-goatcounter="https://brajesh3.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="youtube.png" sizes="64x64">
 </head>
 <body>
-    <div class="container">
-        <h1>YouTube Video Embedder</h1>
-        <input type="text" id="youtubeLink" placeholder="Enter YouTube link...">
-        <button onclick="embedContent()">Embed</button>
-        <div id="videoContainer"></div>
-        <div id="iframeContainer"></div>
-        <button id="copyButton" onclick="copyIframeCode()">Copy Iframe Code</button>
-    </div>
-    <footer>
-        <button onclick="location.href='https://brajesh3.github.io/projects/'">My Projects</button>
-        <button onclick="location.href='https://brajesh3.github.io/about/'">About Me</button>
-        <p>Project by Brajesh Kumar</p>
+    <main class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <img src="youtube.png" alt="YouTube Icon" class="app-logo">
+                <h1>YouTube Video Embedder</h1>
+            </div>
+            <p class="subtitle">Quickly generate clean, responsive iframe embed codes for videos and playlists.</p>
+        </header>
+
+        <section class="input-section">
+            <form id="embedForm" class="embed-form">
+                <input 
+                    type="url" 
+                    id="youtubeLink" 
+                    placeholder="Paste YouTube video, playlist, or shorts link..." 
+                    required 
+                    autocomplete="off"
+                >
+                <button type="submit" id="embedButton">Embed</button>
+            </form>
+            <div id="errorMessage" class="error-message"></div>
+        </section>
+
+        <section id="resultSection" class="result-section hidden">
+            <div class="preview-card">
+                <h2>Live Preview</h2>
+                <div id="videoContainer" class="video-container"></div>
+            </div>
+
+            <div class="code-card">
+                <div class="code-header">
+                    <h2>Iframe Code</h2>
+                    <button id="copyButton" class="copy-btn">Copy Code</button>
+                </div>
+                <div class="code-body">
+                    <pre><code id="iframeCodeDisplay"></code></pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <div class="footer-links">
+            <a href="https://brajesh3.github.io/projects/">My Projects</a>
+            <a href="https://brajesh3.github.io/about/">About Me</a>
+        </div>
+        <p class="footer-credit">Project by Brajesh Kumar</p>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
