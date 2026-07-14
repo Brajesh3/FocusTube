@@ -472,3 +472,24 @@ body.focus-active .exit-focus-btn {
         border-radius: 0;
     }
 }
+
+/* Ensure fullscreen elements occupy 100% of the viewport and extend under notches */
+:fullscreen,
+iframe:fullscreen,
+.video-container:fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+:-webkit-full-screen,
+iframe:-webkit-full-screen,
+.video-container:-webkit-full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
