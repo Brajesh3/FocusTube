@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                              document.mozFullScreenElement || 
                              document.msFullscreenElement;
         if (isFullscreen) {
-            if (screen.orientation && screen.orientation.lock) {
+            if (window.innerWidth <= 640 && screen.orientation && screen.orientation.lock) {
                 screen.orientation.lock('landscape').catch(() => {});
             }
         } else {
